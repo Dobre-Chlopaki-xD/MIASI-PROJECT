@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1s10lhe" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.0">
-  <bpmn:collaboration id="Collaboration_1edj903">
-    <bpmn:participant id="Participant_05nn87v" processRef="Process_16b3mle" />
-    <bpmn:participant id="Participant_1a67gqj" name="Użytkownik" processRef="Process_0lm4hji" />
-    <bpmn:messageFlow id="MessageFlow_04rjv5z" name="Położenie produktu na wadze" sourceRef="Participant_1a67gqj" targetRef="StartEvent_1" />
-    <bpmn:messageFlow id="MessageFlow_0263qze" name="Waga produktu" sourceRef="DisplayProductMass" targetRef="Participant_1a67gqj" />
-    <bpmn:messageFlow id="MessageFlow_0pce13x" name="Numer produktu" sourceRef="DisplayProductNum" targetRef="Participant_1a67gqj" />
-    <bpmn:messageFlow id="MessageFlow_0netdy7" name="Informacja o błędzie" sourceRef="Event_074pftu" targetRef="Participant_1a67gqj" />
+  <bpmn:collaboration id="rejestracja-produktu">
+    <bpmn:participant id="id-Proces-rejestracji-produktu" name="Proces rejestracji produktu" processRef="process-id-Proces-rejestracji-produktu" />
+    <bpmn:participant id="id-uzytkownik" name="Użytkownik" processRef="process-id-uzytkownik" />
+    <bpmn:messageFlow id="MessageFlow_04rjv5z" name="Położenie produktu na wadze" sourceRef="id-uzytkownik" targetRef="StartEvent_1" />
+    <bpmn:messageFlow id="MessageFlow_0263qze" name="Waga produktu" sourceRef="DisplayProductMass" targetRef="id-uzytkownik" />
+    <bpmn:messageFlow id="MessageFlow_0pce13x" name="Numer produktu" sourceRef="DisplayProductNum" targetRef="id-uzytkownik" />
+    <bpmn:messageFlow id="MessageFlow_0netdy7" name="Informacja o błędzie" sourceRef="Event_074pftu" targetRef="id-uzytkownik" />
   </bpmn:collaboration>
-  <bpmn:process id="Process_16b3mle" isExecutable="true">
+  <bpmn:process id="process-id-Proces-rejestracji-produktu" isExecutable="true">
     <bpmn:sequenceFlow id="Flow_03r4knc" sourceRef="StartEvent_1" targetRef="Gateway_1kviea8" />
     <bpmn:dataStoreReference id="Database" name="Baza produktów użytkownika" />
     <bpmn:exclusiveGateway id="IsNFCTagPresent" name="Czy na produkcie jest tag NFC?" default="Flow_0lyebsc">
@@ -113,17 +113,17 @@
       <bpmn:outgoing>Flow_0x71qtl</bpmn:outgoing>
     </bpmn:task>
   </bpmn:process>
-  <bpmn:process id="Process_0lm4hji" isExecutable="false" />
+  <bpmn:process id="process-id-uzytkownik" isExecutable="false" />
   <bpmn:signal id="Signal_118ovft" name="ProductTakenDownSig" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1edj903">
-      <bpmndi:BPMNShape id="Participant_05nn87v_di" bpmnElement="Participant_05nn87v" isHorizontal="true">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="rejestracja-produktu">
+      <bpmndi:BPMNShape id="Participant_05nn87v_di" bpmnElement="id-Proces-rejestracji-produktu" isHorizontal="true">
         <dc:Bounds x="129" y="279" width="1501" height="661" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="432" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Participant_1a67gqj_di" bpmnElement="Participant_1a67gqj" isHorizontal="true">
+      <bpmndi:BPMNShape id="Participant_1a67gqj_di" bpmnElement="id-uzytkownik" isHorizontal="true">
         <dc:Bounds x="129" y="80" width="1501" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Flow_0y6zk0o_di" bpmnElement="Database">

@@ -18,36 +18,36 @@ import static org.junit.Assert.*;
  */
 public class ProcessUnitTest {
 
-  @ClassRule
-  @Rule
-  public static ProcessEngineRule rule = TestCoverageProcessEngineRuleBuilder.create().build();
-
-  private static final String PROCESS_DEFINITION_KEY = "waga-dobrych-chlopakow";
-
-  static {
-    LogFactory.useSlf4jLogging(); // MyBatis
-  }
-
-  @Before
-  public void setup() {
-    init(rule.getProcessEngine());
-  }
-
-  /**
-   * Just tests if the process definition is deployable.
-   */
-  @Test
-  @Deployment(resources = "rejestracja_produktu.bpmn")
-  public void testParsingAndDeployment() {
-    // nothing is done here, as we just want to check for exceptions during deployment
-  }
-
-  @Test
-  @Deployment(resources = "rejestracja_produktu.bpmn")
-  public void testHappyPath() {
-	  //ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
-	  
-	  // Now: Drive the process by API and assert correct behavior by camunda-bpm-assert
-  }
+//  @ClassRule
+//  @Rule
+//  public static ProcessEngineRule rule = TestCoverageProcessEngineRuleBuilder.create().build();
+//
+//  private static final String PROCESS_DEFINITION_KEY = "waga-dobrych-chlopakow";
+//
+//  static {
+//    LogFactory.useSlf4jLogging(); // MyBatis
+//  }
+//
+//  @Before
+//  public void setup() {
+//    init(rule.getProcessEngine());
+//  }
+//
+//  /**
+//   * Just tests if the process definition is deployable.
+//   */
+//  @Test
+//  @Deployment(resources = "rejestracja_produktu.bpmn")
+//  public void testParsingAndDeployment() {
+//    // nothing is done here, as we just want to check for exceptions during deployment
+//  }
+//
+//  @Test
+//  @Deployment(resources = "rejestracja_produktu.bpmn")
+//  public void testHappyPath() {
+//	  //ProcessInstance processInstance = processEngine().getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY);
+//
+//	  // Now: Drive the process by API and assert correct behavior by camunda-bpm-assert
+//  }
 
 }
