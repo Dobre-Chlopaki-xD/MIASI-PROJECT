@@ -2,7 +2,7 @@
 
 # Uruchamianie projektu w Camundzie
 
-1. Import deapendancy w mavenie,
+1. Import dependency w mavenie,
 2. Maven install (po prawej strony ide) - utworzenie pliku .war
 3. Uruchomić raz serwer Camundym,
 4. Plik .war do folderu webapps, w plikach Camundy,
