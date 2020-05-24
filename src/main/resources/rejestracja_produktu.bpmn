@@ -12,11 +12,11 @@
     <bpmn:sequenceFlow id="Flow_03r4knc" sourceRef="StartEvent_1" targetRef="Gateway_1kviea8" />
     <bpmn:dataStoreReference id="Database" name="Baza produktów użytkownika" />
     <bpmn:exclusiveGateway id="IsNFCTagPresent" name="Czy na produkcie jest tag NFC?" default="Flow_0lyebsc">
-      <bpmn:incoming>Flow_1tei81w</bpmn:incoming>
+      <bpmn:incoming>Flow_0m0tuhh</bpmn:incoming>
       <bpmn:outgoing>Flow_0lyebsc</bpmn:outgoing>
       <bpmn:outgoing>Flow_0rub5po</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="CheckForProductPresence" name="Sprawdź czy produkt jest w bazie" camunda:class="ProductRepository">
+    <bpmn:serviceTask id="CheckForProductPresence" name="Sprawdź czy produkt jest w bazie" camunda:class="war.CheckProductInDatabaseDelegate">
       <bpmn:incoming>Flow_0rub5po</bpmn:incoming>
       <bpmn:outgoing>Flow_1l00bka</bpmn:outgoing>
       <bpmn:property id="Property_0izkg8m" name="__targetRef_placeholder" />
@@ -32,7 +32,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0lyebsc" name="Nie" sourceRef="IsNFCTagPresent" targetRef="DisplayProductMass" />
     <bpmn:sequenceFlow id="Flow_0rub5po" name="Tak" sourceRef="IsNFCTagPresent" targetRef="CheckForProductPresence">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{isTagPresent == True}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{isTagPresent == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1l00bka" sourceRef="CheckForProductPresence" targetRef="IsProductAvailableInDB" />
     <bpmn:sequenceFlow id="Flow_05tfdjq" name="Nie" sourceRef="IsProductAvailableInDB" targetRef="RegisterNewProduct">
@@ -45,19 +45,11 @@
       <bpmn:outgoing>Flow_03r4knc</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0ysplao" sourceRef="Gateway_1kviea8" targetRef="FiveSecCountdownTimer" />
-    <bpmn:sequenceFlow id="Flow_1tei81w" sourceRef="FiveSecCountdownTimer" targetRef="IsNFCTagPresent" />
     <bpmn:eventBasedGateway id="Gateway_1kviea8">
       <bpmn:incoming>Flow_03r4knc</bpmn:incoming>
       <bpmn:outgoing>Flow_0ysplao</bpmn:outgoing>
       <bpmn:outgoing>Flow_1tfmroi</bpmn:outgoing>
     </bpmn:eventBasedGateway>
-    <bpmn:intermediateCatchEvent id="FiveSecCountdownTimer" name="Odczytuj wagę oraz tag NFC przez 5 sekund">
-      <bpmn:incoming>Flow_0ysplao</bpmn:incoming>
-      <bpmn:outgoing>Flow_1tei81w</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_00tm9ln">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5S</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="Flow_1tfmroi" sourceRef="Gateway_1kviea8" targetRef="ProductTakenDown" />
     <bpmn:serviceTask id="UpdateProductMass" name="Uaktualnij wagę produktu" camunda:class="ProductRepository">
       <bpmn:incoming>ProductAvailable</bpmn:incoming>
@@ -112,6 +104,14 @@
       <bpmn:incoming>Flow_1tyewfx</bpmn:incoming>
       <bpmn:outgoing>Flow_0x71qtl</bpmn:outgoing>
     </bpmn:task>
+    <bpmn:intermediateCatchEvent id="FiveSecCountdownTimer" name="Odczytuj wagę oraz tag NFC przez 5 sekund">
+      <bpmn:incoming>Flow_0ysplao</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m0tuhh</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_00tm9ln">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0m0tuhh" sourceRef="FiveSecCountdownTimer" targetRef="IsNFCTagPresent" />
   </bpmn:process>
   <bpmn:process id="process-id-uzytkownik" isExecutable="false" />
   <bpmn:signal id="Signal_118ovft" name="ProductTakenDownSig" />
@@ -238,19 +238,15 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0ysplao_di" bpmnElement="Flow_0ysplao">
         <di:waypoint x="355" y="450" />
-        <di:waypoint x="432" y="450" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1tei81w_di" bpmnElement="Flow_1tei81w">
-        <di:waypoint x="468" y="450" />
-        <di:waypoint x="585" y="450" />
+        <di:waypoint x="382" y="450" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Gateway_015ndiq_di" bpmnElement="Gateway_1kviea8">
         <dc:Bounds x="305" y="425" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0s985jx_di" bpmnElement="FiveSecCountdownTimer">
-        <dc:Bounds x="432" y="432" width="36" height="36" />
+        <dc:Bounds x="382" y="432" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="413" y="475" width="75" height="40" />
+          <dc:Bounds x="363" y="475" width="75" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_11rayqt_di" bpmnElement="ProductTakenDown">
@@ -322,6 +318,10 @@
       <bpmndi:BPMNEdge id="Flow_02s1lro_di" bpmnElement="Flow_02s1lro">
         <di:waypoint x="1248" y="850" />
         <di:waypoint x="1562" y="850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m0tuhh_di" bpmnElement="Flow_0m0tuhh">
+        <di:waypoint x="418" y="450" />
+        <di:waypoint x="585" y="450" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -24,8 +24,8 @@ public class CamundaBpmProcessApplication extends ServletProcessApplication {
   public void onDeploymentFinished(ProcessEngine processEngine) {
 
     // start an initial process instance
-//    Map<String, Object> variables = new HashMap<String, Object>();
-//    variables.put("name", "John");
+      //Map<String, Object> variables = new HashMap<String, Object>();
+      //variables.put("isTagPresent", true);
 //    
 //    processEngine.getRuntimeService().startProcessInstanceByKey(PROCESS_DEFINITION_KEY, variables);
   }
