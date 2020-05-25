@@ -9,6 +9,11 @@
     <bpmn:messageFlow id="MessageFlow_0netdy7" name="Informacja o błędzie" sourceRef="Event_074pftu" targetRef="id-uzytkownik" />
   </bpmn:collaboration>
   <bpmn:process id="process-id-Proces-rejestracji-produktu" isExecutable="true">
+    <bpmn:extensionElements>
+      <camunda:properties>
+        <camunda:property name="isTagPresent" value="true" />
+      </camunda:properties>
+    </bpmn:extensionElements>
     <bpmn:sequenceFlow id="Flow_03r4knc" sourceRef="StartEvent_1" targetRef="Gateway_1kviea8" />
     <bpmn:dataStoreReference id="Database" name="Baza produktów użytkownika" />
     <bpmn:exclusiveGateway id="IsNFCTagPresent" name="Czy na produkcie jest tag NFC?" default="Flow_0lyebsc">
