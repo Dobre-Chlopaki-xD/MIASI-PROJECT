@@ -27,4 +27,22 @@ CREATE TABLE produkty(
 
 INSERT INTO produkty1(Nazwa_produktu, Masa_produktu)
 values ('Mąka', 1250), ('Ryż', 2000), ('Cukier', 2500), ('Śliwki', 420);
+
 ```
+# Instrukcja przerwania
+
+1. Uruchomić serwer Camundy
+2. Uruchomić projekt 
+
+## Aby wykonać przerwanie:
+
+W Postmanie na adres
+```localhost:8080/engine-rest/signal ```
+Wykonać metodę POST z następującym body
+```
+{
+  "name" : "ProductTakenDownSignal"
+} 
+```
+
+
