@@ -24,11 +24,15 @@
         <div class="form-element">
             <label class="form-element--label" for="weight">Waga:</label>
             <div class="form-element--input">
-                <input class="form-element--input" id="weight" type="text" placeholder="Waga..." name="weight" disabled>
+                <input class="form-element--input" id="weight" type="number" placeholder="Waga..." name="weight" disabled>
             </div>
         </div>
         <div class="form-button--wrapper">
             <input class="form-button" id="submit" type="button" value="Zważ">
+        </div>
+        <div class="form-element timer">
+            <label class="timer--label" for="timer">Czas ważenia:</label>
+            <input class="timer--input" id="timer" type="text" value="0.00" name="timer" disabled>
         </div>
     </form>
     <script src="./index.js" type="module"></script>

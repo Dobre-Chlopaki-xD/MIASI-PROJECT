@@ -5,7 +5,10 @@ export default class App {
     static INCORRECTLY_WEIGHED_PRODUCT = 'Produkt został nieprawidłowo zważony';
 
     constructor() {
+        this.timerInterval = null;
         this.weightingStartTime = 0;
+
+        this.timer = document.querySelector('#timer');
         this.tagInput = document.querySelector('#tag');
         this.nameInput = document.querySelector('#name');
         this.weightInput = document.querySelector('#weight');
@@ -20,18 +23,15 @@ export default class App {
 
     startWeightingTheProduct() {
         this.resetWeight();
+        this.startTimer();
         this.weightingStartTime = performance.now();
-    }
-
-    resetWeight() {
-        this.setProductName('');
-        this.setProductWeight('');
     }
 
     stopWeightingTheProduct() {
         const weightingEndTime = performance.now();
         const weightingDuration = weightingEndTime - this.weightingStartTime;
         void this.handleWeightedProduct(weightingDuration);
+        clearInterval(this.timerInterval);
     }
 
     async handleWeightedProduct(weightingDuration) {
@@ -44,6 +44,12 @@ export default class App {
         this.setProductWeight(weight);
     }
 
+    async getProductNameAndWeight() {
+        const tagId = this.tagInput.value;
+        // logic responsible for geeting data from backend
+        return Promise.resolve({name: 'testName', weight: 12});
+    }
+
     whetherTheProductWasWeightedSufficientTime(weightingTime) {
         return weightingTime >= App.TIME_DURATION_NEEDED_TO_WEIGHT_THE_PRODCUT;
     }
@@ -52,10 +58,24 @@ export default class App {
         alert(App.INCORRECTLY_WEIGHED_PRODUCT);
     }
 
-    async getProductNameAndWeight() {
-        const tagId = this.tagInput.value;
-        // logic responsible for geeting data from backend
-        return Promise.resolve({name: 'testName', weight: 12});
+    startTimer() {
+        this.timerInterval = setInterval(this.updateTimer.bind(this), 10);
+    }
+
+    updateTimer() {
+        const startTimeInSeconds = this.weightingStartTime / 1000;
+        const currentTimeInSeconds = performance.now() / 1000;
+        this.timer.value = `${this.countTimeDelta(startTimeInSeconds, currentTimeInSeconds)}s`;
+    }
+
+    countTimeDelta(start, end) {
+        const delta = end - start;
+        return Math.round((delta + Number.EPSILON) * 100) / 100;
+    }
+
+    resetWeight() {
+        this.setProductName('');
+        this.setProductWeight('');
     }
      
     setProductName(name) {
