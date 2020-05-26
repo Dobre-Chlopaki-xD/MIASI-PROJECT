@@ -3,27 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./style.css" rel="stylesheet">
     <title>Dobre chlopaki</title>
 </head>
 <body>
     <h1>Dobre Chłopaki</h1>
-    <form>
-        <div>
-            <label for="tag">Tag:</label>
-            <input id="tag" type="text" placeholder="Tag" name="tag">
+    <form class="form">
+        <div class="form-element">
+            <label class="form-element--label" for="tag">Tag:</label>
+            <div class="form-element--input">
+                <input id="tag" type="text" placeholder="Tag..." name="tag">
+            </div>
         </div>
-        <div>
-            <label for="name">Nazwa:</label>
-            <input id="name" type="text" placeholder="Nazwa" name="name" disabled>
+        <div class="form-element">
+            <label class="form-element--label" for="name">Nazwa:</label>
+            <div class="form-element--input">
+                <input class="form-element--input" id="name" type="text" placeholder="Nazwa..." name="name" disabled>
+            </div>
         </div>
-        <div>
-            <label for="weight">Waga:</label>
-            <input id="weight" type="text" placeholder="Waga" name="weight" disabled>
+        <div class="form-element">
+            <label class="form-element--label" for="weight">Waga:</label>
+            <div class="form-element--input">
+                <input class="form-element--input" id="weight" type="text" placeholder="Waga..." name="weight" disabled>
+            </div>
         </div>
-        <div>
-            <input id="submit" type="button" value="Zaważ">
+        <div class="form-button--wrapper">
+            <input class="form-button" id="submit" type="button" value="Zważ">
         </div>
     </form>
-    <script src="index.js" type="module"></script>
+    <script src="./index.js" type="module"></script>
 </body>
 </html>
