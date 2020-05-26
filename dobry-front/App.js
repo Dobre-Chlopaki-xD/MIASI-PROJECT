@@ -19,6 +19,7 @@ export default class App {
     initializeListeners() {
         this.submitButton.addEventListener('mousedown', this.startWeightingTheProduct.bind(this));
         this.submitButton.addEventListener('mouseup', this.stopWeightingTheProduct.bind(this));
+        this.submitButton.addEventListener('mouseout', this.stopWeightingTheProduct.bind(this));
     }
 
     startWeightingTheProduct() {
@@ -37,6 +38,7 @@ export default class App {
     async handleWeightedProduct(weightingDuration) {
         if(!this.whetherTheProductWasWeightedSufficientTime(weightingDuration)) {
             this.showNotification();
+            // logic responsible for send weighting break info
             return;
         }
         const {name, weight} = await this.getProductNameAndWeight();
