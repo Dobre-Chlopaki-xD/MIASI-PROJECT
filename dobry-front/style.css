@@ -91,3 +91,23 @@ input:disabled {
     padding: 10px 40px;
     cursor: pointer;
 }
+
+.timer-wrapper {
+    margin-top: 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    width: 100%;
+}
+
+.timer--label {
+    display: block;
+}
+
+.timer--input {
+    text-align: center;
+    font-weight: bold;
+}
