@@ -3,8 +3,11 @@
 export default class App {
     static TIME_DURATION_NEEDED_TO_WEIGHT_THE_PRODCUT = 5000;  // in miliseconds
     static INCORRECTLY_WEIGHED_PRODUCT = 'Produkt został nieprawidłowo zważony';
+    static INTERRUPT_ULR = 'localhost:8080/engine-rest/signal';
+    static PRODUCT_DATA_URL = 'https://jsonplaceholder.typicode.com/todos/1'; // example link we have to change this
 
     constructor() {
+        this.isWeghting = false;
         this.timerInterval = null;
         this.weightingStartTime = 0;
 
@@ -23,22 +26,27 @@ export default class App {
     }
 
     startWeightingTheProduct() {
-        this.resetWeight();
+        this.isWeghting = true;
+        this.resetWeighting();
         this.startTimer();
         this.weightingStartTime = performance.now();
     }
 
     stopWeightingTheProduct() {
+        if(!this.isWeghting) {
+            return;
+        }
+        this.isWeghting = false;
+        clearInterval(this.timerInterval);
         const weightingEndTime = performance.now();
         const weightingDuration = weightingEndTime - this.weightingStartTime;
         void this.handleWeightedProduct(weightingDuration);
-        clearInterval(this.timerInterval);
     }
 
     async handleWeightedProduct(weightingDuration) {
         if(!this.whetherTheProductWasWeightedSufficientTime(weightingDuration)) {
+            this.sendInterruptSignal()
             this.showNotification();
-            // logic responsible for send weighting break info
             return;
         }
         const {name, weight} = await this.getProductNameAndWeight();
@@ -46,10 +54,32 @@ export default class App {
         this.setProductWeight(weight);
     }
 
+    
     async getProductNameAndWeight() {
         const tagId = this.tagInput.value;
-        // logic responsible for geeting data from backend
+        // const productNameAndWeight = await this.sendWeightedProductData();
         return Promise.resolve({name: 'testName', weight: 12});
+    }
+
+    async sendInterruptSignal() {
+        const interruptData = { name : 'ProductTakenDownSignal'} 
+        return await fetch(App.INTERRUPT_ULR, {
+            method: 'POST',
+            data: JSON.stringify(interruptData)
+        });
+        return response;
+    }
+
+    async sendWeightedProductData() {
+        const dataBody = {tagId: this.tagInput.value};
+        return await (await fetch(App.PRODUCT_DATA_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(dataBody)
+        })).json();
+
     }
 
     whetherTheProductWasWeightedSufficientTime(weightingTime) {
@@ -67,7 +97,11 @@ export default class App {
     updateTimer() {
         const startTimeInSeconds = this.weightingStartTime / 1000;
         const currentTimeInSeconds = performance.now() / 1000;
-        this.timer.value = `${this.countTimeDelta(startTimeInSeconds, currentTimeInSeconds)}s`;
+        this.timer.value = this.buildTimerValue(startTimeInSeconds, currentTimeInSeconds);
+    }
+
+    buildTimerValue(startTimeInSeconds, currentTimeInSeconds) {
+        return `${this.countTimeDelta(startTimeInSeconds, currentTimeInSeconds)}s`;
     }
 
     countTimeDelta(start, end) {
@@ -75,7 +109,8 @@ export default class App {
         return Math.round((delta + Number.EPSILON) * 100) / 100;
     }
 
-    resetWeight() {
+    resetWeighting() {
+        this.timer.value = this.buildTimerValue(0, 0);
         this.setProductName('');
         this.setProductWeight('');
     }
