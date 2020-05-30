@@ -15,8 +15,6 @@ public class CheckProductInDatabaseDelegate implements JavaDelegate {
   public void execute(DelegateExecution execution) throws Exception {
     final int PRODUCT_ID_DUMMY_PLS_KILL_ME = 2;
     Connection conn = null;
-    Boolean isConnectionFailed = false;
-    Boolean isProductPresent = false;
     try {
       Class cl = Class.forName("org.h2.Driver");
       conn = DriverManager.getConnection ("jdbc:h2:~/test", "sa","");

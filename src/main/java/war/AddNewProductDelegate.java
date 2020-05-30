@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Random;
 
 /**
  * This is an easy adapter implementation 
@@ -15,16 +16,14 @@ import java.sql.Statement;
  */
 public class AddNewProductDelegate implements JavaDelegate {
   public void execute(DelegateExecution execution) throws Exception {
-    int PRODUCT_ID_DUMMY_PLS_KILL_ME;
-    final int PRODUCT_MASS_DUMMY_PLS_KILL_ME = 420;
     Connection conn = null;
-    Boolean isConnectionFailed = false;
-    Boolean isProductPresent = false;
+    Random generator = new Random();
     try {
       Class cl = Class.forName("org.h2.Driver");
       conn = DriverManager.getConnection ("jdbc:h2:~/test", "sa","");
       Statement st = conn.createStatement();
-      int productID = st.executeUpdate("INSERT INTO produkty(Nazwa_produktu, Masa_produktu) values ('Nowy produkt'," + PRODUCT_MASS_DUMMY_PLS_KILL_ME + ");", Statement.RETURN_GENERATED_KEYS);
+      int productMass = generator.nextInt(12500) + 100;
+      int productID = st.executeUpdate("INSERT INTO produkty(Nazwa_produktu, Masa_produktu) values ('Nowy produkt'," + productMass + ");", Statement.RETURN_GENERATED_KEYS);
       execution.setVariable("productID", productID);
     }catch (SQLException sqle) {
       System.out.println("Blad laczenia z baza " + sqle.getMessage());

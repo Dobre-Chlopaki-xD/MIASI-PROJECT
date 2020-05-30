@@ -4,6 +4,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 
 import java.sql.*;
+import java.util.Random;
 
 /**
  * This is an easy adapter implementation 
@@ -13,16 +14,15 @@ import java.sql.*;
 public class UpdateProductMassDelegate implements JavaDelegate {
   public void execute(DelegateExecution execution) throws Exception {
     final int PRODUCT_ID_DUMMY_PLS_KILL_ME = 2;
-    final int PRODUCT_MASS_DUMMY_PLS_KILL_ME = 420;
     Connection conn = null;
-    Boolean isConnectionFailed = false;
-    Boolean isProductPresent = false;
+    Random generator = new Random();
     try {
       Class cl = Class.forName("org.h2.Driver");
       conn = DriverManager.getConnection ("jdbc:h2:~/test", "sa","");
       Statement st = conn.createStatement();
+      int productMass = generator.nextInt(12500) + 100;
       st.executeUpdate("Update produkty set Masa_produktu=" +
-              PRODUCT_MASS_DUMMY_PLS_KILL_ME +
+              productMass +
               "where IDProduktu=" +
               PRODUCT_ID_DUMMY_PLS_KILL_ME);
       execution.setVariable("productID", PRODUCT_ID_DUMMY_PLS_KILL_ME);
