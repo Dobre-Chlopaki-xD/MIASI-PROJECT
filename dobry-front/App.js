@@ -88,7 +88,8 @@ export default class App {
         return await (await fetch(App.PRODUCT_DATA_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
             },
             data: JSON.stringify(dataBody)
         }));
