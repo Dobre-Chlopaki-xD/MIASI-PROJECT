@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./style.css" rel="stylesheet">
+    <title>Dobre chlopaki</title>
+</head>
+<body>
+    <h1>Dobre Chłopaki</h1>
+    <form class="form">
+        <div class="form-element">
+            <label class="form-element--label" for="tag">Tag:</label>
+            <select class="form-element--select" id="tag"" name="tag">
+                <option value="" disabled>Wybierz tag</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+        </div>
+        <div class="form-element">
+            <label class="form-element--label" for="name">Nazwa:</label>
+            <div class="form-element--input">
+                <input class="form-element--input" id="name" type="text" placeholder="Nazwa..." name="name" disabled>
+            </div>
+        </div>
+        <div class="form-element">
+            <label class="form-element--label" for="weight">Waga:</label>
+            <div class="form-element--input">
+                <input class="form-element--input" id="weight" type="number" placeholder="Waga..." name="weight" disabled>
+            </div>
+        </div>
+        <div class="form-button--wrapper">  
+            <input class="form-button" id="submit" type="button" value="Zważ">
+        </div>
+        <div class="form-element timer-wrapper">
+            <label class="timer--hint" for="timer">Przytrzymaj przycisk 15 sekund by zważyć</label>
+            <label class="timer--label" for="timer">Czas ważenia:</label>
+            <input class="timer--input" id="timer" type="text" value="0.00" name="timer" disabled>
+        </div>
+    </form>
+    <script src="./index.js" type="module"></script>
+</body>
+</html>
