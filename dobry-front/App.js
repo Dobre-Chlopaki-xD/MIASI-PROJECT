@@ -1,7 +1,7 @@
 "use strict";
 
 export default class App {
-    static TIME_DURATION_NEEDED_TO_WEIGHT_THE_PRODCUT = 5000;  // in miliseconds
+    static TIME_DURATION_NEEDED_TO_WEIGHT_THE_PRODCUT = 15000;  // in miliseconds
     static INCORRECTLY_WEIGHED_PRODUCT = 'Produkt został nieprawidłowo zważony';
     static INTERRUPT_ULR = 'localhost:8080/engine-rest/signal';
     static PRODUCT_DATA_URL = 'http://localhost:8080/engine-rest/process-definition/key/process-id-Proces-rejestracji-produktu/start';
