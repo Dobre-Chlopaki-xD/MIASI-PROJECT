@@ -87,6 +87,7 @@ export default class App {
           };
         return await (await fetch(App.PRODUCT_DATA_URL, {
             method: 'POST',
+            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
