@@ -6,7 +6,9 @@ export default class App {
     static INTERRUPT_ULR = 'localhost:8080/engine-rest/signal';
     static PRODUCT_DATA_URL = 'http://localhost:8080/engine-rest/process-definition/key/process-id-Proces-rejestracji-produktu/start';
 
-    constructor() {
+    constructor(exampleData) {
+        this.exampleData = exampleData;
+
         this.isWeghting = false;
         this.timerInterval = null;
         this.weightingStartTime = 0;
@@ -57,8 +59,9 @@ export default class App {
     
     async getProductNameAndWeight() {
         const tagId = this.tagInput.value;
-        // const productNameAndWeight = await this.sendWeightedProductData();
-        return Promise.resolve({name: 'testName', weight: 12});
+        await this.sendWeightedProductData(tagId);
+        const product = this.exampleData.get(tagId);
+        return Promise.resolve(product);
     }
 
     async sendInterruptSignal() {
@@ -69,7 +72,7 @@ export default class App {
         });
     }
 
-    async sendWeightedProductData() {
+    async sendWeightedProductData(tagId) {
         const dataBody = {
             "variables": {
               "isTagPresent" : {
@@ -77,7 +80,7 @@ export default class App {
                   "type": "Boolean"
               },
               "ProductID" : {
-                  "value" : 5,
+                  "value" : tagId,
                   "type" : "Integer"
               }
             }
@@ -88,7 +91,7 @@ export default class App {
                 'Content-Type': 'application/json'
             },
             data: JSON.stringify(dataBody)
-        })).json();
+        }));
 
     }
 
