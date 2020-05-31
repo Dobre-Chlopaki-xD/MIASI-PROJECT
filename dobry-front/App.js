@@ -80,7 +80,7 @@ export default class App {
                   "type": "Boolean"
               },
               "ProductID" : {
-                  "value" : tagId,
+                  "value" : parseInt(tagId),
                   "type" : "Integer"
               }
             }
