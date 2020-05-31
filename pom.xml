@@ -136,6 +136,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/javax.mail/mail -->
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+      <version>1.6.2</version>
+    </dependency>
+
     <!-- Add your own dependencies here, if in compile scope, they are added to the war -->
 
   </dependencies>

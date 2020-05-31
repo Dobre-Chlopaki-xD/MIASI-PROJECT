@@ -74,13 +74,13 @@
       <bpmn:incoming>Flow_1tiiqs3</bpmn:incoming>
       <bpmn:incoming>Flow_0x71qtl</bpmn:incoming>
       <bpmn:outgoing>Flow_161q3yr</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1639xuh" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1639xuh" camunda:class="war.SendProductNumberEmailDelegate" />
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="DisplayProductMass" name="Wyświetlenie wagi produktu">
       <bpmn:incoming>Flow_0lyebsc</bpmn:incoming>
       <bpmn:incoming>Flow_161q3yr</bpmn:incoming>
       <bpmn:outgoing>Flow_0si579j</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_0j2fsj7" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0j2fsj7" camunda:class="war.SendProductMassEmailDelegate" />
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_1tyewfx" sourceRef="RegisterNewProduct" targetRef="SaveProdNoOnNFC" />
     <bpmn:sequenceFlow id="Flow_1tiiqs3" sourceRef="UpdateProductMass" targetRef="DisplayProductNum" />
@@ -98,7 +98,7 @@
     <bpmn:intermediateThrowEvent id="Event_074pftu" name="Wyświetl informację o błędzie">
       <bpmn:incoming>Flow_08eyilp</bpmn:incoming>
       <bpmn:outgoing>Flow_02s1lro</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1ozdibo" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1ozdibo" camunda:class="war.SendErrorEmailDelegate" />
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_08eyilp" sourceRef="ProductTakenDown" targetRef="Event_074pftu" />
     <bpmn:sequenceFlow id="Flow_02s1lro" sourceRef="Event_074pftu" targetRef="Event_1z0fh6x" />
@@ -120,6 +120,7 @@
   </bpmn:process>
   <bpmn:process id="process-id-uzytkownik" isExecutable="false" />
   <bpmn:signal id="Signal_118ovft" name="ProductTakenDownSignal" />
+  <bpmn:message id="Message_1mo5qyk" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="rejestracja-produktu">
       <bpmndi:BPMNShape id="Participant_05nn87v_di" bpmnElement="id-Proces-rejestracji-produktu" isHorizontal="true">

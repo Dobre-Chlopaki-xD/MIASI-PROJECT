@@ -25,7 +25,7 @@ public class UpdateProductMassDelegate implements JavaDelegate {
               productMass +
               "where IDProduktu=" +
               PRODUCT_ID);
-      execution.setVariable("productID", PRODUCT_ID);
+      execution.setVariable("productMass", productMass);
     }catch (SQLException sqle) {
       System.out.println("Blad laczenia z baza " + sqle.getMessage());
     } catch (ClassNotFoundException e) {
