@@ -7,7 +7,7 @@ import java.util.Properties;
 public class EmailSender {
     private static String USER_NAME = "wagadobrychchlopakow";  // GMail user name (just the part before "@gmail.com")
     private static String PASSWORD = "Waga_MIASI"; // GMail password
-    private static String RECIPIENT = "lukasz662@gmail.com";
+    private static String RECIPIENT = "209450@edu.p.lodz.pl";
 
     public static void sendMail(String subj, String body) {
         String from = USER_NAME;
