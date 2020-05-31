@@ -11,27 +11,21 @@ import java.util.Random;
  * illustrating how a Java Delegate can be used 
  * from within a BPMN 2.0 Service Task.
  */
-public class CheckProductInDatabaseDelegate implements JavaDelegate {
+public class UpdateProductMassDelegate implements JavaDelegate {
   public void execute(DelegateExecution execution) throws Exception {
-    final int PRODUCT_ID = (int)(execution.getVariable("ProductID")==null? -1 : execution.getVariable("ProductID"));
+    final int PRODUCT_ID = (int)execution.getVariable("ProductID");
     Connection conn = null;
+    Random generator = new Random();
     try {
       Class cl = Class.forName("org.h2.Driver");
       conn = DriverManager.getConnection ("jdbc:h2:~/test", "sa","");
       Statement st = conn.createStatement();
-      ResultSet rs = st.executeQuery("Select * from PRODUKTY");
-      if(rs.next()==false) {
-        execution.setVariable("isProductPresent", false);
-        return;
-      }
-      while (rs.next()) {
-        int productID = rs.getInt("IDProduktu");
-        if(productID==PRODUCT_ID) {
-          execution.setVariable("isProductPresent", true);
-          return;
-        }
-      }
-      execution.setVariable("isProductPresent", false);
+      int productMass = generator.nextInt(12500) + 100;
+      st.executeUpdate("Update produkty set Masa_produktu=" +
+              productMass +
+              "where IDProduktu=" +
+              PRODUCT_ID);
+      execution.setVariable("productID", PRODUCT_ID);
     }catch (SQLException sqle) {
       System.out.println("Blad laczenia z baza " + sqle.getMessage());
     } catch (ClassNotFoundException e) {

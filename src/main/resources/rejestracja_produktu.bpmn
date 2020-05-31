@@ -56,14 +56,14 @@
       <bpmn:outgoing>Flow_1tfmroi</bpmn:outgoing>
     </bpmn:eventBasedGateway>
     <bpmn:sequenceFlow id="Flow_1tfmroi" sourceRef="Gateway_1kviea8" targetRef="ProductTakenDown" />
-    <bpmn:serviceTask id="UpdateProductMass" name="Uaktualnij wagę produktu" camunda:class="ProductRepository">
+    <bpmn:serviceTask id="UpdateProductMass" name="Uaktualnij wagę produktu" camunda:class="war.UpdateProductMassDelegate">
       <bpmn:incoming>ProductAvailable</bpmn:incoming>
       <bpmn:outgoing>Flow_1tiiqs3</bpmn:outgoing>
       <bpmn:dataOutputAssociation id="DataOutputAssociation_1ubmaws">
         <bpmn:targetRef>Database</bpmn:targetRef>
       </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="RegisterNewProduct" name="Zarejestruj nowy produkt" camunda:class="ProductRepository">
+    <bpmn:serviceTask id="RegisterNewProduct" name="Zarejestruj nowy produkt" camunda:class="war.AddNewProductDelegate">
       <bpmn:incoming>Flow_05tfdjq</bpmn:incoming>
       <bpmn:outgoing>Flow_1tyewfx</bpmn:outgoing>
       <bpmn:dataOutputAssociation id="DataOutputAssociation_17qbyyj">
