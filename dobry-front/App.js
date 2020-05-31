@@ -4,7 +4,7 @@ export default class App {
     static TIME_DURATION_NEEDED_TO_WEIGHT_THE_PRODCUT = 5000;  // in miliseconds
     static INCORRECTLY_WEIGHED_PRODUCT = 'Produkt został nieprawidłowo zważony';
     static INTERRUPT_ULR = 'localhost:8080/engine-rest/signal';
-    static PRODUCT_DATA_URL = 'https://jsonplaceholder.typicode.com/todos/1'; // example link we have to change this
+    static PRODUCT_DATA_URL = 'http://localhost:8080/engine-rest/process-definition/key/process-id-Proces-rejestracji-produktu/start';
 
     constructor() {
         this.isWeghting = false;
@@ -67,11 +67,21 @@ export default class App {
             method: 'POST',
             data: JSON.stringify(interruptData)
         });
-        return response;
     }
 
     async sendWeightedProductData() {
-        const dataBody = {tagId: this.tagInput.value};
+        const dataBody = {
+            "variables": {
+              "isTagPresent" : {
+                  "value" : true,
+                  "type": "Boolean"
+              },
+              "ProductID" : {
+                  "value" : 5,
+                  "type" : "Integer"
+              }
+            }
+          };
         return await (await fetch(App.PRODUCT_DATA_URL, {
             method: 'POST',
             headers: {

@@ -95,7 +95,7 @@ input:disabled {
 }
 
 .timer-wrapper {
-    margin-top: 10px;
+    margin-top: 5px;
 
     display: flex;
     flex-direction: column;
@@ -107,6 +107,12 @@ input:disabled {
 
 .timer--label {
     display: block;
+}
+
+.timer--hint{
+    font-size: 13px;
+    font-style: italic;
+    padding-bottom: 10px;
 }
 
 .timer--input {
