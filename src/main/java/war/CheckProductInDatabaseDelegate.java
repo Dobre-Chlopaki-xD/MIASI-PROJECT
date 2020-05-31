@@ -13,7 +13,7 @@ import java.util.Random;
  */
 public class CheckProductInDatabaseDelegate implements JavaDelegate {
   public void execute(DelegateExecution execution) throws Exception {
-    final int PRODUCT_ID_DUMMY_PLS_KILL_ME = 2;
+    final int PRODUCT_ID = (int)(execution.getVariable("ProductID")==null? -1 : execution.getVariable("ProductID"));
     Connection conn = null;
     try {
       Class cl = Class.forName("org.h2.Driver");
@@ -26,7 +26,7 @@ public class CheckProductInDatabaseDelegate implements JavaDelegate {
       }
       while (rs.next()) {
         int productID = rs.getInt("IDProduktu");
-        if(productID==PRODUCT_ID_DUMMY_PLS_KILL_ME) {
+        if(productID==PRODUCT_ID) {
           execution.setVariable("isProductPresent", true);
           return;
         }

@@ -13,7 +13,7 @@ import java.util.Random;
  */
 public class UpdateProductMassDelegate implements JavaDelegate {
   public void execute(DelegateExecution execution) throws Exception {
-    final int PRODUCT_ID_DUMMY_PLS_KILL_ME = 2;
+    final int PRODUCT_ID = (int)execution.getVariable("ProductID");
     Connection conn = null;
     Random generator = new Random();
     try {
@@ -24,8 +24,8 @@ public class UpdateProductMassDelegate implements JavaDelegate {
       st.executeUpdate("Update produkty set Masa_produktu=" +
               productMass +
               "where IDProduktu=" +
-              PRODUCT_ID_DUMMY_PLS_KILL_ME);
-      execution.setVariable("productID", PRODUCT_ID_DUMMY_PLS_KILL_ME);
+              PRODUCT_ID);
+      execution.setVariable("productID", PRODUCT_ID);
     }catch (SQLException sqle) {
       System.out.println("Blad laczenia z baza " + sqle.getMessage());
     } catch (ClassNotFoundException e) {

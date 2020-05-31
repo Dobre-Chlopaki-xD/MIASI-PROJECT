@@ -113,7 +113,7 @@
       <bpmn:incoming>Flow_0ysplao</bpmn:incoming>
       <bpmn:outgoing>Flow_0m0tuhh</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_00tm9ln">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5S</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="Flow_0m0tuhh" sourceRef="FiveSecCountdownTimer" targetRef="IsNFCTagPresent" />
