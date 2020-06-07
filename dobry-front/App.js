@@ -3,12 +3,12 @@
 export default class App {
     static TIME_DURATION_NEEDED_TO_WEIGHT_THE_PRODCUT = 15000;  // in miliseconds
     static INCORRECTLY_WEIGHED_PRODUCT = 'Produkt został nieprawidłowo zważony';
-    static INTERRUPT_ULR = 'localhost:8080/engine-rest/signal';
+    static INTERRUPT_ULR = 'http://localhost:8080/engine-rest/signal';
     static PRODUCT_DATA_URL = 'http://localhost:8080/engine-rest/process-definition/key/process-id-Proces-rejestracji-produktu/start';
 
     constructor(exampleData) {
         this.exampleData = exampleData;
-
+        
         this.isWeghting = false;
         this.timerInterval = null;
         this.weightingStartTime = 0;
@@ -68,6 +68,7 @@ export default class App {
         const interruptData = { name : 'ProductTakenDownSignal'} 
         return await fetch(App.INTERRUPT_ULR, {
             method: 'POST',
+            mode: 'no-cors',
             data: JSON.stringify(interruptData)
         });
     }
