@@ -4,7 +4,7 @@
 
 1. Import dependency w mavenie,
 2. Maven install (po prawej strony ide) - utworzenie pliku .war
-3. Uruchomić raz serwer Camundym,
+3. Uruchomić raz serwer Camundy,
 4. Plik .war do folderu webapps, w plikach Camundy,
 5. Jeśli serwer jest uruchomiony to w uruchomionej aplikacji Tomcata zacznie się deploy aplikacji,
 6. Skompilowany projekt jest w dashboardzie Camundy w "Processes", nasz nazywa się process-id-Proces-rejestracji-produktu
@@ -28,6 +28,22 @@ CREATE TABLE produkty(
 INSERT INTO produkty1(Nazwa_produktu, Masa_produktu)
 values ('Mąka', 1250), ('Ryż', 2000), ('Cukier', 2500), ('Śliwki', 420);
 
+```
+
+# CORS
+
+1. Należy przejść do katalogu ```webapps/engine-rest/WEB-INF/web.xml``` w Camundzie
+2. W katalogu znajduję się plik ```web.xml```, należy dodać do niego poniższy kod  w dowolnym miejscu wewnątrz znacznika ```<web-aap/>``` np. pod innymi filtrami.
+
+```xml
+  <filter>
+    <filter-name>CorsFilter</filter-name>
+    <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CorsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
 ```
 
 # Sterowanie za pomocą REST API
