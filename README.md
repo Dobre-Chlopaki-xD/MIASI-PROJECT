@@ -50,7 +50,7 @@ values ('Mąka', 1250), ('Ryż', 2000), ('Cukier', 2500), ('Śliwki', 420);
 
 1. Aby uruchomić proces należy podać 
 ```
-/engine-rest/process-definition/key/{nazwa_procesu}/start
+POST /engine-rest/process-definition/key/{nazwa_procesu}/start
 ```
 
 ```
@@ -58,7 +58,7 @@ localhost:8080/engine-rest/process-definition/key/process-id-Proces-rejestracji-
 ```
 2. W celu znalezienia aktywnego user taska, w którym program czeka na użytkownika należy podać
 ```
-/engine-rest/task?processDefinitionKey={nazwa_procesu}
+GET /engine-rest/task?processDefinitionKey={nazwa_procesu}
 ```
 
 ```
@@ -94,7 +94,7 @@ zapytanie zwróci listę aktywnych zadań opisanych parametrami, z czego ważne 
 ```
 na endpoint, gdzie id odpowiada numerowi taska z punktu 2.
 ```
-/engine-rest/task/{id}/complete
+POST /engine-rest/task/{id}/complete
 ```
 
 ```
