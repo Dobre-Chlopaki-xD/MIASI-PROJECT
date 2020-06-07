@@ -5,6 +5,7 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 
 import java.sql.*;
 import java.util.Random;
+import java.util.logging.Logger;
 
 /**
  * This is an easy adapter implementation 
@@ -12,6 +13,9 @@ import java.util.Random;
  * from within a BPMN 2.0 Service Task.
  */
 public class CheckProductInDatabaseDelegate implements JavaDelegate {
+
+  private final Logger LOGGER = Logger.getLogger(LoggerDelegate.class.getName());
+
   public void execute(DelegateExecution execution) throws Exception {
     final int PRODUCT_ID = (int)(execution.getVariable("ProductID")==null? -1 : execution.getVariable("ProductID"));
     Connection conn = null;
@@ -24,6 +28,7 @@ public class CheckProductInDatabaseDelegate implements JavaDelegate {
         execution.setVariable("isProductPresent", false);
         return;
       }
+      execution.setVariable("isProductPresent", false);
       while (rs.next()) {
         int productID = rs.getInt("IDProduktu");
         if(productID==PRODUCT_ID) {
@@ -31,11 +36,12 @@ public class CheckProductInDatabaseDelegate implements JavaDelegate {
           return;
         }
       }
-      execution.setVariable("isProductPresent", false);
     }catch (SQLException sqle) {
       System.out.println("Blad laczenia z baza " + sqle.getMessage());
+      throw sqle;
     } catch (ClassNotFoundException e) {
       System.out.println("Nie ma drivera, no sorry, cos popsules!");
+      throw e;
     }finally{
       conn.close();
     }
