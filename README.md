@@ -48,6 +48,11 @@ values ('Mąka', 1250), ('Ryż', 2000), ('Cukier', 2500), ('Śliwki', 420);
 
 # Sterowanie za pomocą REST API
 
+Do każdego zapytnia typu POST należy dodać nagłówek
+```
+    Content-Type: application/json
+```
+
 1. Aby uruchomić proces należy podać 
 ```
 POST /engine-rest/process-definition/key/{nazwa_procesu}/start
