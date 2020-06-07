@@ -46,20 +46,59 @@ values ('Mąka', 1250), ('Ryż', 2000), ('Cukier', 2500), ('Śliwki', 420);
 </filter-mapping>
 ```
 
-# Instrukcja przerwania
+# Sterowanie za pomocą REST API
 
-1. Uruchomić serwer Camundy
-2. Uruchomić projekt 
+1. Aby uruchomić proces należy podać 
+```
+POST /engine-rest/process-definition/key/{nazwa_procesu}/start
+```
 
-## Aby wykonać przerwanie:
+```
+localhost:8080/engine-rest/process-definition/key/process-id-Proces-rejestracji-produktu/start
+```
+2. W celu znalezienia aktywnego user taska, w którym program czeka na użytkownika należy podać
+```
+GET /engine-rest/task?processDefinitionKey={nazwa_procesu}
+```
 
-W Postmanie na adres
-```localhost:8080/engine-rest/signal ```
-Wykonać metodę POST z następującym body
+```
+localhost:8080/engine-rest/task?processDefinitionKey=process-id-Proces-rejestracji-produktu
+```
+
+zapytanie zwróci listę aktywnych zadań opisanych parametrami, z czego ważne są ```id``` oraz ```name```
 ```
 {
-  "name" : "ProductTakenDownSignal"
-} 
+        "id": "b6bc708d-a8f8-11ea-b107-0a002700000a",
+        "name": "Zdejmij produkt",
+        ...
+}
 ```
 
+3. User Task - "Odczytaj dane" wymaga przesłania pliku json, z parametrami
+```
+{
+    "variables": {
+        "validData": {
+            "value": "true",
+            "type" : "Boolean"
+        },
+        "isTagPresent": {
+        	"value": "true",
+        	"type" : "Boolean"
+        },
+    	"ProductID" : {
+    		"value" : 1,
+    		"type" : "Integer"
+    	}
+    }
+```
+na endpoint, gdzie id odpowiada numerowi taska z punktu 2.
+```
+POST /engine-rest/task/{id}/complete
+```
 
+```
+localhost:8080/engine-rest/task/afcf5e3b-a8f8-11ea-b107-0a002700000a/complete
+```
+
+4. W przypadku innych user tasków należy wywołać zapytanie o aktywyny user task (punkt 2) i następnie wysłać go bez zawartości na endpoint z punktu 3.

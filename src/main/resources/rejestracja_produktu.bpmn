@@ -14,10 +14,9 @@
         <camunda:property name="isTagPresent" value="true" />
       </camunda:properties>
     </bpmn:extensionElements>
-    <bpmn:sequenceFlow id="Flow_03r4knc" sourceRef="StartEvent_1" targetRef="Gateway_1kviea8" />
     <bpmn:dataStoreReference id="Database" name="Baza produktów użytkownika" />
     <bpmn:exclusiveGateway id="IsNFCTagPresent" name="Czy na produkcie jest tag NFC?" default="Flow_0lyebsc">
-      <bpmn:incoming>Flow_0m0tuhh</bpmn:incoming>
+      <bpmn:incoming>Flow_065slj1</bpmn:incoming>
       <bpmn:outgoing>Flow_0lyebsc</bpmn:outgoing>
       <bpmn:outgoing>Flow_0rub5po</bpmn:outgoing>
     </bpmn:exclusiveGateway>
@@ -35,7 +34,7 @@
       <bpmn:outgoing>Flow_05tfdjq</bpmn:outgoing>
       <bpmn:outgoing>ProductAvailable</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_0lyebsc" name="Nie" sourceRef="IsNFCTagPresent" targetRef="DisplayProductMass" />
+    <bpmn:sequenceFlow id="Flow_0lyebsc" name="Nie" sourceRef="IsNFCTagPresent" targetRef="TakeOff-NoNFC" />
     <bpmn:sequenceFlow id="Flow_0rub5po" name="Tak" sourceRef="IsNFCTagPresent" targetRef="CheckForProductPresence">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{isTagPresent == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -47,15 +46,8 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{isProductPresent == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:startEvent id="StartEvent_1">
-      <bpmn:outgoing>Flow_03r4knc</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0dfaygx</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_0ysplao" sourceRef="Gateway_1kviea8" targetRef="FiveSecCountdownTimer" />
-    <bpmn:eventBasedGateway id="Gateway_1kviea8">
-      <bpmn:incoming>Flow_03r4knc</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ysplao</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1tfmroi</bpmn:outgoing>
-    </bpmn:eventBasedGateway>
-    <bpmn:sequenceFlow id="Flow_1tfmroi" sourceRef="Gateway_1kviea8" targetRef="ProductTakenDown" />
     <bpmn:serviceTask id="UpdateProductMass" name="Uaktualnij wagę produktu" camunda:class="war.UpdateProductMassDelegate">
       <bpmn:incoming>ProductAvailable</bpmn:incoming>
       <bpmn:outgoing>Flow_1tiiqs3</bpmn:outgoing>
@@ -70,53 +62,76 @@
         <bpmn:targetRef>Database</bpmn:targetRef>
       </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1tyewfx" sourceRef="RegisterNewProduct" targetRef="SaveProdNoOnNFC" />
+    <bpmn:sequenceFlow id="Flow_1tiiqs3" sourceRef="UpdateProductMass" targetRef="TakeOff-Database" />
+    <bpmn:sequenceFlow id="Flow_161q3yr" sourceRef="DisplayProductNum" targetRef="DisplayProductMass" />
+    <bpmn:task id="SaveProdNoOnNFC" name="Zapisz numer produktu na tagu NFC">
+      <bpmn:incoming>Flow_1tyewfx</bpmn:incoming>
+      <bpmn:outgoing>Flow_09av0hd</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:userTask id="ReadData" name="Odczytaj dane">
+      <bpmn:incoming>Flow_0dfaygx</bpmn:incoming>
+      <bpmn:outgoing>Flow_14sboej</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0dfaygx" sourceRef="StartEvent_1" targetRef="ReadData" />
+    <bpmn:exclusiveGateway id="Gateway_0vkj242" name="Odczytywano dane przez 15 sekund?">
+      <bpmn:incoming>Flow_14sboej</bpmn:incoming>
+      <bpmn:outgoing>Flow_065slj1</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0157hnu</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_14sboej" sourceRef="ReadData" targetRef="Gateway_0vkj242" />
+    <bpmn:sequenceFlow id="Flow_065slj1" name="Tak" sourceRef="Gateway_0vkj242" targetRef="IsNFCTagPresent">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{validData==true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0157hnu" name="Nie" sourceRef="Gateway_0vkj242" targetRef="TakeOff-Error">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{validData==false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1nde408" name="Sukces">
+      <bpmn:incoming>Flow_12knisi</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_1z0fh6x" name="Niepowodzenie">
+      <bpmn:incoming>Flow_0ywo0e4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_12knisi" sourceRef="DisplayProductMass" targetRef="Event_1nde408" />
+    <bpmn:sequenceFlow id="Flow_0dfoc44" sourceRef="TakeOff-NoNFC" targetRef="DisplayProductMass" />
+    <bpmn:intermediateThrowEvent id="DisplayProductMass" name="Wyświetlenie wagi produktu">
+      <bpmn:incoming>Flow_161q3yr</bpmn:incoming>
+      <bpmn:incoming>Flow_0dfoc44</bpmn:incoming>
+      <bpmn:outgoing>Flow_12knisi</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0j2fsj7" camunda:class="war.SendProductMassEmailDelegate" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:userTask id="TakeOff-NoNFC" name="Zdejmij produkt">
+      <bpmn:incoming>Flow_0lyebsc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dfoc44</bpmn:outgoing>
+    </bpmn:userTask>
     <bpmn:intermediateThrowEvent id="DisplayProductNum" name="Wyświetl numer produktu">
-      <bpmn:incoming>Flow_1tiiqs3</bpmn:incoming>
-      <bpmn:incoming>Flow_0x71qtl</bpmn:incoming>
+      <bpmn:incoming>Flow_1kr40wa</bpmn:incoming>
+      <bpmn:incoming>Flow_1pvxtoc</bpmn:incoming>
       <bpmn:outgoing>Flow_161q3yr</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1639xuh" camunda:class="war.SendProductNumberEmailDelegate" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="DisplayProductMass" name="Wyświetlenie wagi produktu">
-      <bpmn:incoming>Flow_0lyebsc</bpmn:incoming>
-      <bpmn:incoming>Flow_161q3yr</bpmn:incoming>
-      <bpmn:outgoing>Flow_0si579j</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_0j2fsj7" camunda:class="war.SendProductMassEmailDelegate" />
-    </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_1tyewfx" sourceRef="RegisterNewProduct" targetRef="SaveProdNoOnNFC" />
-    <bpmn:sequenceFlow id="Flow_1tiiqs3" sourceRef="UpdateProductMass" targetRef="DisplayProductNum" />
-    <bpmn:sequenceFlow id="Flow_0x71qtl" sourceRef="SaveProdNoOnNFC" targetRef="DisplayProductNum" />
-    <bpmn:sequenceFlow id="Flow_161q3yr" sourceRef="DisplayProductNum" targetRef="DisplayProductMass" />
-    <bpmn:intermediateCatchEvent id="ProductTakenDown" name="Zdjęto produkt">
-      <bpmn:incoming>Flow_1tfmroi</bpmn:incoming>
-      <bpmn:outgoing>Flow_08eyilp</bpmn:outgoing>
-      <bpmn:signalEventDefinition id="SignalEventDefinition_1rikzvd" signalRef="Signal_118ovft" />
-    </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="Flow_0si579j" sourceRef="DisplayProductMass" targetRef="Event_1nde408" />
-    <bpmn:endEvent id="Event_1nde408" name="Sukces">
-      <bpmn:incoming>Flow_0si579j</bpmn:incoming>
-    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1kr40wa" sourceRef="TakeOff-Database" targetRef="DisplayProductNum" />
+    <bpmn:userTask id="TakeOff-Database" name="Zdejmij produkt">
+      <bpmn:incoming>Flow_1tiiqs3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kr40wa</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0lh5zt5" sourceRef="TakeOff-Error" targetRef="Event_074pftu" />
+    <bpmn:userTask id="TakeOff-NoDatabase" name="Zdejmij produkt">
+      <bpmn:incoming>Flow_09av0hd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pvxtoc</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="TakeOff-Error" name="Zdejmij produkt">
+      <bpmn:incoming>Flow_0157hnu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lh5zt5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0ywo0e4" sourceRef="Event_074pftu" targetRef="Event_1z0fh6x" />
     <bpmn:intermediateThrowEvent id="Event_074pftu" name="Wyświetl informację o błędzie">
-      <bpmn:incoming>Flow_08eyilp</bpmn:incoming>
-      <bpmn:outgoing>Flow_02s1lro</bpmn:outgoing>
+      <bpmn:incoming>Flow_0lh5zt5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ywo0e4</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1ozdibo" camunda:class="war.SendErrorEmailDelegate" />
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_08eyilp" sourceRef="ProductTakenDown" targetRef="Event_074pftu" />
-    <bpmn:sequenceFlow id="Flow_02s1lro" sourceRef="Event_074pftu" targetRef="Event_1z0fh6x" />
-    <bpmn:endEvent id="Event_1z0fh6x" name="Niepowodzenie">
-      <bpmn:incoming>Flow_02s1lro</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:task id="SaveProdNoOnNFC" name="Zapisz numer produktu na tagu NFC">
-      <bpmn:incoming>Flow_1tyewfx</bpmn:incoming>
-      <bpmn:outgoing>Flow_0x71qtl</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:intermediateCatchEvent id="FiveSecCountdownTimer" name="Odczytuj wagę oraz tag NFC przez 15 sekund">
-      <bpmn:incoming>Flow_0ysplao</bpmn:incoming>
-      <bpmn:outgoing>Flow_0m0tuhh</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_00tm9ln">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="Flow_0m0tuhh" sourceRef="FiveSecCountdownTimer" targetRef="IsNFCTagPresent" />
+    <bpmn:sequenceFlow id="Flow_09av0hd" sourceRef="SaveProdNoOnNFC" targetRef="TakeOff-NoDatabase" />
+    <bpmn:sequenceFlow id="Flow_1pvxtoc" sourceRef="TakeOff-NoDatabase" targetRef="DisplayProductNum" />
   </bpmn:process>
   <bpmn:process id="process-id-uzytkownik" isExecutable="false" />
   <bpmn:signal id="Signal_118ovft" name="ProductTakenDownSignal" />
@@ -124,13 +139,13 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="rejestracja-produktu">
       <bpmndi:BPMNShape id="Participant_05nn87v_di" bpmnElement="id-Proces-rejestracji-produktu" isHorizontal="true">
-        <dc:Bounds x="129" y="279" width="1501" height="661" />
+        <dc:Bounds x="129" y="279" width="1701" height="661" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="432" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Participant_1a67gqj_di" bpmnElement="id-uzytkownik" isHorizontal="true">
-        <dc:Bounds x="129" y="80" width="1501" height="120" />
+        <dc:Bounds x="129" y="80" width="1701" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Flow_0y6zk0o_di" bpmnElement="Database">
         <dc:Bounds x="885" y="735" width="50" height="50" />
@@ -151,33 +166,29 @@
           <dc:Bounds x="645" y="436" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_03r4knc_di" bpmnElement="Flow_03r4knc">
-        <di:waypoint x="215" y="450" />
-        <di:waypoint x="305" y="450" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1nde408_di" bpmnElement="Event_1nde408">
-        <dc:Bounds x="1562" y="362" width="36" height="36" />
+        <dc:Bounds x="1742" y="362" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1562" y="405" width="37" height="14" />
+          <dc:Bounds x="1742" y="405" width="37" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_17blqqf_di" bpmnElement="DisplayProductMass">
-        <dc:Bounds x="1382" y="362" width="36" height="36" />
+        <dc:Bounds x="1652" y="362" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1415" y="398" width="90" height="27" />
+          <dc:Bounds x="1685" y="398" width="90" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="MessageFlow_0263qze_di" bpmnElement="MessageFlow_0263qze">
-        <di:waypoint x="1400" y="362" />
-        <di:waypoint x="1400" y="200" />
+        <di:waypoint x="1670" y="362" />
+        <di:waypoint x="1670" y="200" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1413" y="243" width="74" height="14" />
+          <dc:Bounds x="1683" y="243" width="74" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0lyebsc_di" bpmnElement="Flow_0lyebsc">
         <di:waypoint x="610" y="425" />
         <di:waypoint x="610" y="380" />
-        <di:waypoint x="1382" y="380" />
+        <di:waypoint x="1510" y="380" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="617" y="400" width="17" height="14" />
         </bpmndi:BPMNLabel>
@@ -237,39 +248,15 @@
         <di:waypoint x="749" y="570" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1z0fh6x_di" bpmnElement="Event_1z0fh6x">
-        <dc:Bounds x="1562" y="832" width="36" height="36" />
+        <dc:Bounds x="1742" y="832" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1542" y="875" width="76" height="14" />
+          <dc:Bounds x="1722" y="875" width="76" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0ysplao_di" bpmnElement="Flow_0ysplao">
-        <di:waypoint x="355" y="450" />
-        <di:waypoint x="382" y="450" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Gateway_015ndiq_di" bpmnElement="Gateway_1kviea8">
-        <dc:Bounds x="305" y="425" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0s985jx_di" bpmnElement="FiveSecCountdownTimer">
-        <dc:Bounds x="382" y="432" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="360" y="475" width="81" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_11rayqt_di" bpmnElement="ProductTakenDown">
-        <dc:Bounds x="432" y="832" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="415" y="875" width="71" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1tfmroi_di" bpmnElement="Flow_1tfmroi">
-        <di:waypoint x="330" y="475" />
-        <di:waypoint x="330" y="850" />
-        <di:waypoint x="432" y="850" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_07jp38a_di" bpmnElement="DisplayProductNum">
-        <dc:Bounds x="1252" y="512" width="36" height="36" />
+        <dc:Bounds x="1402" y="512" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1281" y="546" width="78" height="27" />
+          <dc:Bounds x="1431" y="546" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0fqfyqt_di" bpmnElement="SaveProdNoOnNFC">
@@ -281,53 +268,107 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1tiiqs3_di" bpmnElement="Flow_1tiiqs3">
         <di:waypoint x="1070" y="530" />
-        <di:waypoint x="1252" y="530" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0x71qtl_di" bpmnElement="Flow_0x71qtl">
-        <di:waypoint x="1210" y="620" />
-        <di:waypoint x="1270" y="620" />
-        <di:waypoint x="1270" y="548" />
+        <di:waypoint x="1270" y="530" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="MessageFlow_0pce13x_di" bpmnElement="MessageFlow_0pce13x">
-        <di:waypoint x="1270" y="512" />
-        <di:waypoint x="1270" y="200" />
+        <di:waypoint x="1420" y="512" />
+        <di:waypoint x="1420" y="200" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1270" y="243" width="79" height="14" />
+          <dc:Bounds x="1490" y="243" width="79" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_161q3yr_di" bpmnElement="Flow_161q3yr">
-        <di:waypoint x="1288" y="530" />
-        <di:waypoint x="1400" y="530" />
-        <di:waypoint x="1400" y="398" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0si579j_di" bpmnElement="Flow_0si579j">
-        <di:waypoint x="1418" y="380" />
-        <di:waypoint x="1562" y="380" />
+        <di:waypoint x="1438" y="530" />
+        <di:waypoint x="1670" y="530" />
+        <di:waypoint x="1670" y="398" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_0te4neo_di" bpmnElement="Event_074pftu">
-        <dc:Bounds x="1212" y="832" width="36" height="36" />
+        <dc:Bounds x="1452" y="832" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1200" y="875" width="60" height="40" />
+          <dc:Bounds x="1440" y="875" width="60" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="MessageFlow_0netdy7_di" bpmnElement="MessageFlow_0netdy7">
-        <di:waypoint x="1230" y="832" />
-        <di:waypoint x="1230" y="200" />
+        <di:waypoint x="1470" y="832" />
+        <di:waypoint x="1470" y="200" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1159" y="236" width="61" height="27" />
+          <dc:Bounds x="1349" y="236" width="61" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_08eyilp_di" bpmnElement="Flow_08eyilp">
-        <di:waypoint x="468" y="850" />
-        <di:waypoint x="1212" y="850" />
+      <bpmndi:BPMNShape id="Activity_0chvzc6_di" bpmnElement="ReadData">
+        <dc:Bounds x="260" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0dfaygx_di" bpmnElement="Flow_0dfaygx">
+        <di:waypoint x="215" y="450" />
+        <di:waypoint x="260" y="450" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_02s1lro_di" bpmnElement="Flow_02s1lro">
-        <di:waypoint x="1248" y="850" />
-        <di:waypoint x="1562" y="850" />
+      <bpmndi:BPMNShape id="Gateway_0vkj242_di" bpmnElement="Gateway_0vkj242" isMarkerVisible="true">
+        <dc:Bounds x="405" y="425" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="395" y="375" width="70" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_14sboej_di" bpmnElement="Flow_14sboej">
+        <di:waypoint x="360" y="450" />
+        <di:waypoint x="405" y="450" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0m0tuhh_di" bpmnElement="Flow_0m0tuhh">
-        <di:waypoint x="418" y="450" />
+      <bpmndi:BPMNEdge id="Flow_065slj1_di" bpmnElement="Flow_065slj1">
+        <di:waypoint x="455" y="450" />
         <di:waypoint x="585" y="450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="512" y="432" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0157hnu_di" bpmnElement="Flow_0157hnu">
+        <di:waypoint x="430" y="475" />
+        <di:waypoint x="430" y="850" />
+        <di:waypoint x="1320" y="850" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="437" y="660" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_08pos0y_di" bpmnElement="TakeOff-NoNFC">
+        <dc:Bounds x="1510" y="340" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_12knisi_di" bpmnElement="Flow_12knisi">
+        <di:waypoint x="1688" y="380" />
+        <di:waypoint x="1742" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dfoc44_di" bpmnElement="Flow_0dfoc44">
+        <di:waypoint x="1610" y="380" />
+        <di:waypoint x="1652" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kr40wa_di" bpmnElement="Flow_1kr40wa">
+        <di:waypoint x="1370" y="530" />
+        <di:waypoint x="1402" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_195bgoo_di" bpmnElement="TakeOff-Database">
+        <dc:Bounds x="1270" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0lh5zt5_di" bpmnElement="Flow_0lh5zt5">
+        <di:waypoint x="1420" y="850" />
+        <di:waypoint x="1452" y="850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0fxw9fj_di" bpmnElement="TakeOff-Error">
+        <dc:Bounds x="1320" y="810" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1j8i1zg_di" bpmnElement="TakeOff-NoDatabase">
+        <dc:Bounds x="1270" y="590" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ywo0e4_di" bpmnElement="Flow_0ywo0e4">
+        <di:waypoint x="1488" y="850" />
+        <di:waypoint x="1742" y="850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09av0hd_di" bpmnElement="Flow_09av0hd">
+        <di:waypoint x="1210" y="620" />
+        <di:waypoint x="1240" y="620" />
+        <di:waypoint x="1240" y="630" />
+        <di:waypoint x="1270" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pvxtoc_di" bpmnElement="Flow_1pvxtoc">
+        <di:waypoint x="1370" y="630" />
+        <di:waypoint x="1420" y="630" />
+        <di:waypoint x="1420" y="548" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
