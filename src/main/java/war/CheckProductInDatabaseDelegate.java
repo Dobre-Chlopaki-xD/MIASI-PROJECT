@@ -21,21 +21,24 @@ public class CheckProductInDatabaseDelegate implements JavaDelegate {
     Connection conn = null;
     try {
       Class cl = Class.forName("org.h2.Driver");
+      Boolean temp = false;
       conn = DriverManager.getConnection ("jdbc:h2:~/test", "sa","");
       Statement st = conn.createStatement();
       ResultSet rs = st.executeQuery("Select * from PRODUKTY");
       if(rs.next()==false) {
-        execution.setVariable("isProductPresent", false);
+        execution.setVariable("isProductPresent", temp);
         return;
       }
-      execution.setVariable("isProductPresent", false);
+
       while (rs.next()) {
         int productID = rs.getInt("IDProduktu");
         if(productID==PRODUCT_ID) {
-          execution.setVariable("isProductPresent", true);
-          return;
+          temp = true;
+          //throw new Exception("ID PRODUKTU TO: " + PRODUCT_ID);
         }
       }
+      execution.setVariable("isProductPresent", temp);
+      //throw new Exception("JEST? : " + temp);
     }catch (SQLException sqle) {
       System.out.println("Blad laczenia z baza " + sqle.getMessage());
       throw sqle;
